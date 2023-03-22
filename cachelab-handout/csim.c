@@ -135,7 +135,7 @@ int operation(long address, int size, Set *setPointer) {
     if (lineP->flag == FALSE) {
       changeLine(p->linePointer, lineOffset, blockOffset, lineP);
       return 2; // 说明没有eviction
-    } else if (lineOffset == lineP->tag && size + blockOffset < numBlock) {
+    } else if (lineOffset == lineP->tag && size + blockOffset <= numBlock) {
       changeLine(p->linePointer, lineOffset, blockOffset, lineP);
       return 1;
     } else {
@@ -225,6 +225,9 @@ void update(FILE *fp, ReadLine *readline, Set *set) {
   while (fscanf(fp, " %c %lx,%d\n", &readline->type, &readline->address,
                 &readline->size) == 3) {
     int test;
+    if (readline->type == 'I') {
+      continue;
+    }
     printf("%c %lx,%d", readline->type, readline->address, readline->size);
     switch (readline->type) {
     case 'M':
@@ -243,10 +246,10 @@ void printTest(int test) {
     printf(" hit "); // normal hit
     hit++;
   } else if (test == 2) { // Miss without Eviction
-    printf(" Miss ");
+    printf(" miss ");
     miss++;
   } else { // Miss and eviction
-    printf(" Eviction ");
+    printf(" miss eviction ");
     miss++;
     eviction++;
   }
